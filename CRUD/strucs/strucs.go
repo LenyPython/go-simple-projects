@@ -1,9 +1,9 @@
 package strucs
 
-import "encoding/json"
+//import "encoding/json"
 
 
 type Movie struct {
-  ID string `json:"id"`
-  title string `json:"title"`
+  Id string //`json:"id"`
+  Title string //`json:"title"`
 }
