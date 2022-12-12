@@ -1,17 +1,36 @@
 package handlers
 
 import (
-  "net/http"
-  "CRUD/strucs"
+	"encoding/json"
+	"net/http"
+	"CRUD/strucs"
+	"github.com/gorilla/mux"
 )
 
-func GetMovies(r http.ResponseWriter, w *http.Request) []strucs.Movie{
-  arr := []strucs.Movie{
-    {Id: "1",Title: "FIrst mov"},
-    {Id: "2",Title: "Sec mov"},
-  }
-  return arr
+
+func GetMovies(res http.ResponseWriter, req *http.Request) {
+  res.Header().Set("Content-type", "application/json")
+  json.NewEncoder(res).Encode(moviesDB)
 }
-func GetMovie(r http.ResponseWriter, w *http.Request) strucs.Movie{
-  return strucs.Movie{Id:"1", Title: "First mov"}
+func GetMovie(res http.ResponseWriter, req *http.Request) {
+  res.Header().Set("Content-type", "application/json")
+  var movie strucs.Movie
+  params := mux.Vars(req)
+  for _, item := range moviesDB {
+    if item.Id == params["id"] {
+      movie = item
+      break
+    }
+  }
+  json.NewEncoder(res).Encode(movie)
+}
+func DeleteMovie(res http.ResponseWriter, req *http.Request){
+  res.Header().Set("Content-type","application/json")
+  params := mux.Vars(req)
+  for i, item := range moviesDB {
+    if item.Id == params["id"]{
+      moviesDB = append(moviesDB[:i],moviesDB[i+1:]...)
+      break
+    }
+  }
 }

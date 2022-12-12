@@ -9,7 +9,7 @@ type Movie struct {
   Director *Director //`json:"director"`
 }
  type Director struct {
-  Firstname string
+  FirstName string
   LastName string
 }
 
