@@ -3,9 +3,10 @@ package handlers
 import (
 	"CRUD/strucs"
 	"encoding/json"
+	"math/rand"
 	"net/http"
-  "math/rand"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -47,4 +48,17 @@ func DeleteMovie(res http.ResponseWriter, req *http.Request){
     }
   }
   json.NewEncoder(res).Encode(deleted)
+}
+func UpdateMovie(res http.ResponseWriter, req *http.Request){
+  params := mux.Vars(req)
+  id := params["id"]
+  title := params["title"]
+  director := strings.Split(params["dir"], " ")
+  for _, movie := range moviesDB {
+    if movie.Id == id {
+      movie.Title = title
+      movie.Director = &strucs.Director{FirstName:director[0], LastName: director[1]}
+      break
+    }
+  }
 }

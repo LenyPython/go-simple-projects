@@ -1,7 +1,6 @@
 package main
 
 import (
-	// "math/rand"
 	"fmt"
 	"log"
 	"net/http"
