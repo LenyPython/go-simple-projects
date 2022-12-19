@@ -6,7 +6,6 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -50,15 +49,25 @@ func DeleteMovie(res http.ResponseWriter, req *http.Request){
   json.NewEncoder(res).Encode(deleted)
 }
 func UpdateMovie(res http.ResponseWriter, req *http.Request){
+  res.Header().Set("Content-type", "application/json")
   params := mux.Vars(req)
   id := params["id"]
   title := params["title"]
-  director := strings.Split(params["dir"], " ")
-  for _, movie := range moviesDB {
-    if movie.Id == id {
-      movie.Title = title
-      movie.Director = &strucs.Director{FirstName:director[0], LastName: director[1]}
+  directorName := params["dir_name"]
+  directorLastName := params["dir_last"]
+  var dir strucs.Director
+  for i, item := range moviesDB {
+    if item.Id == id {
+      dir = *item.Director
+      moviesDB = append(moviesDB[:i],moviesDB[i+1:]...)
       break
     }
   }
+  if directorName != "" {
+    dir.FirstName = directorName
+  }
+  if directorLastName != "" {
+    dir.LastName = directorLastName
+  }
+  moviesDB = append(moviesDB, strucs.Movie{Id: id, Title: title, Director: &dir})
 }
