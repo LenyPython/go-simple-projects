@@ -52,22 +52,32 @@ func UpdateMovie(res http.ResponseWriter, req *http.Request){
   res.Header().Set("Content-type", "application/json")
   params := mux.Vars(req)
   id := params["id"]
-  title := params["title"]
-  directorName := params["dir_name"]
-  directorLastName := params["dir_last"]
-  var dir strucs.Director
+  var data strucs.UpdateData
+  movie := strucs.Movie{Id:"",Title:"", Director: &strucs.Director{FirstName:"",LastName:""}}
+  json.NewDecoder(req.Body).Decode(&data)
   for i, item := range moviesDB {
     if item.Id == id {
-      dir = *item.Director
-      moviesDB = append(moviesDB[:i],moviesDB[i+1:]...)
+      movie.Id = id
+      movie.Director.FirstName = item.Director.FirstName
+      movie.Director.LastName = item.Director.LastName
+      movie.Title = item.Title
+      moviesDB = append(moviesDB[:i], moviesDB[i+1:]...)
       break
     }
+    if i == len(moviesDB) -1 {
+      json.NewEncoder(res).Encode("Wrong id")
+      return
+    }
   }
-  if directorName != "" {
-    dir.FirstName = directorName
+  if data.Title != "" {
+    movie.Title = data.Title
   }
-  if directorLastName != "" {
-    dir.LastName = directorLastName
+  if data.FirstName != "" {
+    movie.Director.FirstName = data.FirstName
   }
-  moviesDB = append(moviesDB, strucs.Movie{Id: id, Title: title, Director: &dir})
+  if data.LastName != "" {
+    movie.Director.LastName = data.LastName
+  }
+  moviesDB = append(moviesDB, movie)
+  json.NewEncoder(res).Encode(movie)
 }

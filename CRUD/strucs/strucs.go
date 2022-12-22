@@ -12,5 +12,10 @@ type Movie struct {
   FirstName string `json:"FirstName"`
   LastName string `json:"LastName"`
 }
+type UpdateData struct {
+  Title string `json:"title"`
+  FirstName string `json:"firstName"`
+  LastName string `json:"lastName"`
+}
 
 
