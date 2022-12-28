@@ -4,11 +4,13 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+
+  "api/pkg/routes"
 )
 
 func HomeHandler(res http.ResponseWriter, req *http.Request){}
 
 func main() {
   r := mux.NewRouter()
-  r.HandleFunc("/", HomeHandler)
+  routes.RegisterBookStoreRoutes(r)
 }
