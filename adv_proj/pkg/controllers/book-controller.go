@@ -1,5 +1,7 @@
 package controllers
 
-func CreateBook(){
+import "net/http"
+
+func CreateBook(res http.ResponseWriter, req *http.Request){
 
 }
