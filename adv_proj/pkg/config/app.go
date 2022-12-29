@@ -17,7 +17,6 @@ func Connect(){
     panic(err)
   }
   DB = db
-  defer db.Close()
 } 
 
 func GetDB() *gorm.DB {
