@@ -37,3 +37,9 @@ func GetABook(id uint64) (*Book, *gorm.DB) {
   db := db.Where("ID=?", id).Find(&book)
   return &book, db
 }
+
+func DeleteBook(id uint64) Book {
+  var book Book
+  db.Where("ID=?",id).Delete(book)
+  return book
+}
