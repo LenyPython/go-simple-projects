@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"api/pkg/routes"
-  "api/pkg/conf"
+  "api/pkg/config"
 )
 
 

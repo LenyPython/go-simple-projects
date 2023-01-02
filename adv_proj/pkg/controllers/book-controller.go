@@ -14,8 +14,15 @@ import (
 var NewVook models.Book
 
 func CreateBook(res http.ResponseWriter, req *http.Request){
-
+  Book := *&models.Book{}
+  utils.ParseBody(req, Book)
+  b := Book.CreateBook()
+  response, _ := json.Marshal(b)
+  res.Header().Set("Content-Type", "application/json")
+  res.WriteHeader(http.StatusOK)
+  res.Write(response)
 }
+
 func GetAllBooks(res http.ResponseWriter, req *http.Request){
   allBooks := models.GetAllBooks()
   jsonBooks, _ := json.Marshal(allBooks)
@@ -33,4 +40,24 @@ func GetBook(res http.ResponseWriter, req *http.Request){
   res.Header().Set("Content-Type","application/json")
   res.WriteHeader(http.StatusOK)
   res.Write(jsonBook)
+}
+
+func DeleteBook(res http.ResponseWriter, req *http.Request){
+  params := mux.Vars(req)
+  id, err := strconv.ParseUint(params["id"], 10, 64)
+  if err != nil { panic(err) }
+  bookDel := models.DeleteBook(id)
+  jsonDel, _ := json.Marshal(bookDel)
+  res.Header().Set("Content-Type","application/json")
+  res.WriteHeader(http.StatusOK)
+  res.Write(jsonDel)
+}
+
+func UpdateBook(res http.ResponseWriter, req *http.Request){
+  book := &models.Book{}
+  utils.ParseBody(req, book)
+  params := mux.Vars(req)
+  id, err := strconv.ParseUint(params["id"], 10, 64)
+  if err != nil { panic(err) }
+  prev := models.DeleteBook(id)
 }
