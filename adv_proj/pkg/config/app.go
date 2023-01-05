@@ -1,8 +1,9 @@
 package config
 
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"gorm.io/driver/mysql"
+	_ "gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 var (
@@ -10,12 +11,8 @@ var (
 )
 
 func Connect(){
-  db, err := gorm.Open("mysql", DBuser+":"+
-    DBPass+"@/"+DBname+
-    "?charset=utf8&parseTime-True&loc-Local")
-  if err != nil {
-    panic(err)
-  }
+  db, err := gorm.Open(mysql.Open(DB_DNS), &gorm.Config{})
+  if err != nil { panic(err) }
   DB = db
 } 
 

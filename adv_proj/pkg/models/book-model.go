@@ -1,7 +1,10 @@
 package models
 
 import(
-  "github.com/jinzhu/gorm"
+  "fmt"
+
+  "gorm.io/gorm"
+
   "api/pkg/config"
 )
 
@@ -21,8 +24,10 @@ func inti() {
 }
 
 func (b *Book) CreateBook() *Book {
-  db.NewRecord(b)
-  db.Create(&b)
+  result := db.Create(&b)
+  if result.Error != nil {
+    fmt.Println("Error while creating a book")
+  }
   return b
 }
 
@@ -32,21 +37,27 @@ func GetAllBooks() []Book {
   return books
 }
 
-func GetABook(id uint64) (*Book, *gorm.DB) {
+func GetABook(id uint64) *Book {
   var book Book
-  db := db.Where("ID=?", id).Find(&book)
-  return &book, db
+  result := db.Find(&book, id)
+  if result.Error != nil {
+    fmt.Println("Error while getting a book with id: ", id)
+  }
+  return &book
 }
 
 func DeleteBook(id uint64) Book {
   var book Book
-  db.Where("ID=?",id).Delete(book)
+  result := db.Delete(&book, id)
+  if result.Error != nil {
+    fmt.Println("Could not delete: ", id)
+  }
   return book
 }
 
 func UpdateBook(ubook *Book) *Book {
   var prev Book
-  db.Where("ID = ?", ubook.ID).First(&prev)
+  db.First(&prev, ubook.ID)
   if ubook.Name != "" { prev.Name = ubook.Name }
   if ubook.Author != "" { prev.Author = ubook.Author }
   if ubook.Publication != "" { prev.Publication = ubook.Author }
