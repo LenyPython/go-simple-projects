@@ -54,10 +54,12 @@ func DeleteBook(res http.ResponseWriter, req *http.Request){
 }
 
 func UpdateBook(res http.ResponseWriter, req *http.Request){
-  book := &models.Book{}
-  utils.ParseBody(req, book)
-  params := mux.Vars(req)
-  id, err := strconv.ParseUint(params["id"], 10, 64)
+  var book models.Book
+  utils.ParseBody(req, &book)
+  updated := models.UpdateBook(&book)
+  updatedJson, err := json.Marshal(*updated)
   if err != nil { panic(err) }
-  prev := models.DeleteBook(id)
+  res.Header().Set("Content-Type","application/json")
+  res.WriteHeader(http.StatusOK)
+  res.Write(updatedJson)
 }
