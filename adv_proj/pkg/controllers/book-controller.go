@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -25,6 +26,7 @@ func CreateBook(res http.ResponseWriter, req *http.Request){
 
 func GetAllBooks(res http.ResponseWriter, req *http.Request){
   allBooks := models.GetAllBooks()
+  fmt.Println(allBooks, "errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr")
   jsonBooks, _ := json.Marshal(allBooks)
   res.Header().Set("Content-Type", "application/json")
   res.WriteHeader(http.StatusOK)
@@ -35,7 +37,7 @@ func GetBook(res http.ResponseWriter, req *http.Request){
   params := mux.Vars(req)
   id, err := strconv.ParseUint(params["id"], 10, 64)
   if err != nil { panic(err) }
-  bookRes, _ := models.GetABook(id)
+  bookRes := models.GetABook(id)
   jsonBook, _ := json.Marshal(bookRes)
   res.Header().Set("Content-Type","application/json")
   res.WriteHeader(http.StatusOK)

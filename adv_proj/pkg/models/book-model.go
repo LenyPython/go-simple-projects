@@ -17,9 +17,8 @@ type Book struct {
   Publication string `json:"publication"`
 }
 
-func inti() {
-  config.Connect()
-  db = config.GetDB()
+func init() {
+  db = config.Connect()
   db.AutoMigrate(&Book{})
 }
 
@@ -32,8 +31,11 @@ func (b *Book) CreateBook() *Book {
 }
 
 func GetAllBooks() []Book {
+  fmt.Println("no error yet ----------------------------------------")
   var books []Book
-  db.Find(&books)
+  result := db.Find(&books)
+  if result.Error != nil { panic(result.Error) }
+  fmt.Println("after finding all books and saving them to array")
   return books
 }
 
