@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -26,7 +25,6 @@ func CreateBook(res http.ResponseWriter, req *http.Request){
 
 func GetAllBooks(res http.ResponseWriter, req *http.Request){
   allBooks := models.GetAllBooks()
-  fmt.Println(allBooks, "errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr")
   jsonBooks, _ := json.Marshal(allBooks)
   res.Header().Set("Content-Type", "application/json")
   res.WriteHeader(http.StatusOK)

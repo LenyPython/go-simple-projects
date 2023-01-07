@@ -31,11 +31,9 @@ func (b *Book) CreateBook() *Book {
 }
 
 func GetAllBooks() []Book {
-  fmt.Println("no error yet ----------------------------------------")
   var books []Book
   result := db.Find(&books)
   if result.Error != nil { panic(result.Error) }
-  fmt.Println("after finding all books and saving them to array")
   return books
 }
 
