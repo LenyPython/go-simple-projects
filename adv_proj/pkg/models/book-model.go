@@ -1,7 +1,8 @@
 package models
 
 import (
-	"fmt"
+	"errors"
+	"strconv"
 
 	"gorm.io/gorm"
 
@@ -23,9 +24,13 @@ func init() {
 }
 
 func CreateBook(b *Book) (*Book, error) {
-  result := db.Create(b)
+  result := db.First(b)
+  if result.RowsAffected > 0 {
+    return b, errors.New("Entry exist")
+  }
+  result = db.Create(b)
   if result.Error != nil {
-    return b,result.Error
+    return b, result.Error
   }
   return b, nil
 }
@@ -37,22 +42,26 @@ func GetAllBooks() []Book {
   return books
 }
 
-func GetABook(id uint64) *Book {
+func GetABook(id uint64) (*Book, error) {
   var book Book
   result := db.Find(&book, id)
-  if result.Error != nil {
-    fmt.Println("Error while getting a book with id: ", id)
+  if result.Error != nil || result.RowsAffected == 0 {
+    return &book, errors.New("Error while gettin a book with id" + strconv.FormatUint(id, 10))
   }
-  return &book
+  return &book, nil
 }
 
-func DeleteBook(id uint64) Book {
+func DeleteBook(id uint64) (*Book, error) {
   var book Book
-  result := db.Delete(&book, id)
+  result := db.First(&book, id)
   if result.Error != nil {
-    fmt.Println("Could not delete: ", id)
+    return &book, errors.New("Could not delete: " + strconv.FormatUint(id, 10))
   }
-  return book
+  result = db.Delete(&book)
+  if result.Error != nil{
+    return &book, errors.New("Error occured: "+result.Error.Error())
+  }
+  return &book, nil
 }
 
 func UpdateBook(ubook *Book) *Book {

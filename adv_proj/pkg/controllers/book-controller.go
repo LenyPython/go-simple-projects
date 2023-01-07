@@ -21,7 +21,7 @@ func CreateBook(res http.ResponseWriter, req *http.Request){
   var response json.RawMessage
   if err != nil {
     res.WriteHeader(http.StatusConflict)
-    response, _ = json.Marshal(err)
+    response, _ = json.Marshal(map[string]string{"error":err.Error()})
   } else {
     res.WriteHeader(http.StatusOK)
     response, _ = json.Marshal(b)
@@ -41,11 +41,11 @@ func GetBook(res http.ResponseWriter, req *http.Request){
   params := mux.Vars(req)
   id, err := strconv.ParseUint(params["id"], 10, 64)
   if err != nil { panic(err) }
-  bookRes := models.GetABook(id)
+  bookRes, err := models.GetABook(id)
   var jsonBook json.RawMessage
   res.Header().Set("Content-Type","application/json")
-  if bookRes.ID == 0 { 
-    jsonBook, _ = json.Marshal(map[string]string{"error":"No book found"})
+  if err != nil { 
+    jsonBook, _ = json.Marshal(map[string]string{"error":err.Error()})
     res.WriteHeader(http.StatusNotFound)
   } else { 
     jsonBook, _ = json.Marshal(bookRes)
@@ -58,10 +58,16 @@ func DeleteBook(res http.ResponseWriter, req *http.Request){
   params := mux.Vars(req)
   id, err := strconv.ParseUint(params["id"], 10, 64)
   if err != nil { panic(err) }
-  bookDel := models.DeleteBook(id)
-  jsonDel, _ := json.Marshal(bookDel)
+  bookDel, err := models.DeleteBook(id)
   res.Header().Set("Content-Type","application/json")
-  res.WriteHeader(http.StatusOK)
+  var jsonDel json.RawMessage
+  if err != nil {
+    jsonDel, _ = json.Marshal(map[string]string{"error":err.Error()})
+    res.WriteHeader(http.StatusNotFound)
+  } else {
+    jsonDel, _ = json.Marshal(bookDel)
+    res.WriteHeader(http.StatusOK)
+  }
   res.Write(jsonDel)
 }
 
