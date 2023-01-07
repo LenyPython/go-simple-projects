@@ -14,12 +14,18 @@ import (
 var NewVook models.Book
 
 func CreateBook(res http.ResponseWriter, req *http.Request){
-  Book := *&models.Book{}
-  utils.ParseBody(req, Book)
-  b := Book.CreateBook()
-  response, _ := json.Marshal(b)
+  book := &models.Book{}
+  utils.ParseBody(req, book)
   res.Header().Set("Content-Type", "application/json")
-  res.WriteHeader(http.StatusOK)
+  b, err := models.CreateBook(book)
+  var response json.RawMessage
+  if err != nil {
+    res.WriteHeader(http.StatusConflict)
+    response, _ = json.Marshal(err)
+  } else {
+    res.WriteHeader(http.StatusOK)
+    response, _ = json.Marshal(b)
+  }
   res.Write(response)
 }
 
@@ -36,9 +42,15 @@ func GetBook(res http.ResponseWriter, req *http.Request){
   id, err := strconv.ParseUint(params["id"], 10, 64)
   if err != nil { panic(err) }
   bookRes := models.GetABook(id)
-  jsonBook, _ := json.Marshal(bookRes)
+  var jsonBook json.RawMessage
   res.Header().Set("Content-Type","application/json")
-  res.WriteHeader(http.StatusOK)
+  if bookRes.ID == 0 { 
+    jsonBook, _ = json.Marshal(map[string]string{"error":"No book found"})
+    res.WriteHeader(http.StatusNotFound)
+  } else { 
+    jsonBook, _ = json.Marshal(bookRes)
+    res.WriteHeader(http.StatusOK)
+  }
   res.Write(jsonBook)
 }
 

@@ -1,11 +1,11 @@
 package models
 
-import(
-  "fmt"
+import (
+	"fmt"
 
-  "gorm.io/gorm"
+	"gorm.io/gorm"
 
-  "api/pkg/config"
+	"api/pkg/config"
 )
 
 var db * gorm.DB
@@ -22,12 +22,12 @@ func init() {
   db.AutoMigrate(&Book{})
 }
 
-func (b *Book) CreateBook() *Book {
-  result := db.Create(&b)
+func CreateBook(b *Book) (*Book, error) {
+  result := db.Create(b)
   if result.Error != nil {
-    fmt.Println("Error while creating a book")
+    return b,result.Error
   }
-  return b
+  return b, nil
 }
 
 func GetAllBooks() []Book {
