@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"api/pkg/models"
+	"api/pkg/service"
 	"api/pkg/utils"
 
 	"github.com/gorilla/mux"
@@ -14,19 +15,10 @@ import (
 var NewVook models.Book
 
 func CreateBook(res http.ResponseWriter, req *http.Request){
-  book := &models.Book{}
-  utils.ParseBody(req, book)
+  msg, status := service.CreateBook(req)
   res.Header().Set("Content-Type", "application/json")
-  b, err := models.CreateBook(book)
-  var response json.RawMessage
-  if err != nil {
-    res.WriteHeader(http.StatusConflict)
-    response, _ = json.Marshal(map[string]string{"error":err.Error()})
-  } else {
-    res.WriteHeader(http.StatusOK)
-    response, _ = json.Marshal(b)
-  }
-  res.Write(response)
+  res.WriteHeader(status)
+  res.Write(msg)
 }
 
 func GetAllBooks(res http.ResponseWriter, req *http.Request){

@@ -24,15 +24,12 @@ func init() {
 }
 
 func CreateBook(b *Book) (*Book, error) {
-  result := db.First(b)
-  if result.RowsAffected > 0 {
-    return b, errors.New("Entry exist")
+  result := &Book{}
+  res := db.FirstOrCreate(result, b)
+  if res.RowsAffected == 0 {
+    return result, errors.New("Entry exists")
   }
-  result = db.Create(b)
-  if result.Error != nil {
-    return b, result.Error
-  }
-  return b, nil
+  return result, nil
 }
 
 func GetAllBooks() []Book {
