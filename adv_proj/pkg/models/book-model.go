@@ -32,11 +32,13 @@ func CreateBook(b *Book) (*Book, error) {
   return result, nil
 }
 
-func GetAllBooks() []Book {
+func GetAllBooks() ([]Book, error) {
   var books []Book
   result := db.Find(&books)
-  if result.Error != nil { panic(result.Error) }
-  return books
+  if result.Error != nil { 
+    return books, errors.New(result.Error.Error())
+  }
+  return books, nil
 }
 
 func GetABook(id uint64) (*Book, error) {

@@ -22,11 +22,10 @@ func CreateBook(res http.ResponseWriter, req *http.Request){
 }
 
 func GetAllBooks(res http.ResponseWriter, req *http.Request){
-  allBooks := models.GetAllBooks()
-  jsonBooks, _ := json.Marshal(allBooks)
+  msg, status := service.GetAllBooks()
   res.Header().Set("Content-Type", "application/json")
-  res.WriteHeader(http.StatusOK)
-  res.Write(jsonBooks)
+  res.WriteHeader(status)
+  res.Write(msg)
 }
 
 func GetBook(res http.ResponseWriter, req *http.Request){
