@@ -28,21 +28,12 @@ func GetAllBooks(res http.ResponseWriter, req *http.Request){
   res.Write(msg)
 }
 
-func GetBook(res http.ResponseWriter, req *http.Request){
+func GetBookById(res http.ResponseWriter, req *http.Request){
   params := mux.Vars(req)
-  id, err := strconv.ParseUint(params["id"], 10, 64)
-  if err != nil { panic(err) }
-  bookRes, err := models.GetABook(id)
-  var jsonBook json.RawMessage
-  res.Header().Set("Content-Type","application/json")
-  if err != nil { 
-    jsonBook, _ = json.Marshal(map[string]string{"error":err.Error()})
-    res.WriteHeader(http.StatusNotFound)
-  } else { 
-    jsonBook, _ = json.Marshal(bookRes)
-    res.WriteHeader(http.StatusOK)
-  }
-  res.Write(jsonBook)
+  book, status := service.GetBookById(params["id"])
+  res.Header().Set("Content-Type", "application/json")
+  res.WriteHeader(status)
+  res.Write(book)
 }
 
 func DeleteBook(res http.ResponseWriter, req *http.Request){

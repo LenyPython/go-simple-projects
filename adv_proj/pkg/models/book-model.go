@@ -41,7 +41,7 @@ func GetAllBooks() ([]Book, error) {
   return books, nil
 }
 
-func GetABook(id uint64) (*Book, error) {
+func GetBookById(id uint64) (*Book, error) {
   var book Book
   result := db.Find(&book, id)
   if result.Error != nil || result.RowsAffected == 0 {

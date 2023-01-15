@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"api/pkg/models"
 	"api/pkg/utils"
@@ -29,5 +30,20 @@ func GetAllBooks() (json.RawMessage, int){
     return response, http.StatusConflict
   } 
   response, _ = json.Marshal(res)
+  return response, http.StatusOK
+}
+func GetBookById(id_str string) (json.RawMessage, int) {
+  id, err := strconv.ParseUint(id_str, 10, 64)
+  var response json.RawMessage
+  if err != nil { 
+    response, _ = json.Marshal(map[string]string{"error":err.Error()})  
+    return response, http.StatusBadRequest
+  }
+  bookRes, err := models.GetBookById(id)
+  if err != nil { 
+    response, _ = json.Marshal(map[string]string{"error":err.Error()})
+    return response, http.StatusNotFound
+  } 
+  response, _ = json.Marshal(bookRes)
   return response, http.StatusOK
 }
