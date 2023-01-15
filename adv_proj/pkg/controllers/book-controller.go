@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"api/pkg/models"
 	"api/pkg/service"
@@ -38,19 +37,10 @@ func GetBookById(res http.ResponseWriter, req *http.Request){
 
 func DeleteBook(res http.ResponseWriter, req *http.Request){
   params := mux.Vars(req)
-  id, err := strconv.ParseUint(params["id"], 10, 64)
-  if err != nil { panic(err) }
-  bookDel, err := models.DeleteBook(id)
+  deletedBook, status := service.DeleteBookById(params["id"])
   res.Header().Set("Content-Type","application/json")
-  var jsonDel json.RawMessage
-  if err != nil {
-    jsonDel, _ = json.Marshal(map[string]string{"error":err.Error()})
-    res.WriteHeader(http.StatusNotFound)
-  } else {
-    jsonDel, _ = json.Marshal(bookDel)
-    res.WriteHeader(http.StatusOK)
-  }
-  res.Write(jsonDel)
+  res.WriteHeader(status)
+  res.Write(deletedBook)
 }
 
 func UpdateBook(res http.ResponseWriter, req *http.Request){

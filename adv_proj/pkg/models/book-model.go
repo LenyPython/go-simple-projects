@@ -45,7 +45,7 @@ func GetBookById(id uint64) (*Book, error) {
   var book Book
   result := db.Find(&book, id)
   if result.Error != nil || result.RowsAffected == 0 {
-    return &book, errors.New("Error while gettin a book with id" + strconv.FormatUint(id, 10))
+    return &book, errors.New("Error while gettin a book with id: " + strconv.FormatUint(id, 10))
   }
   return &book, nil
 }
@@ -54,10 +54,10 @@ func DeleteBook(id uint64) (*Book, error) {
   var book Book
   result := db.First(&book, id)
   if result.Error != nil {
-    return &book, errors.New("Could not delete: " + strconv.FormatUint(id, 10))
+    return &book, errors.New("Book with this Id not found: " + strconv.FormatUint(id, 10))
   }
   result = db.Delete(&book)
-  if result.Error != nil{
+  if result.Error != nil {
     return &book, errors.New("Error occured: "+result.Error.Error())
   }
   return &book, nil

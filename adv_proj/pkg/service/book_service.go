@@ -33,8 +33,8 @@ func GetAllBooks() (json.RawMessage, int){
   return response, http.StatusOK
 }
 func GetBookById(id_str string) (json.RawMessage, int) {
-  id, err := strconv.ParseUint(id_str, 10, 64)
   var response json.RawMessage
+  id, err := strconv.ParseUint(id_str, 10, 64)
   if err != nil { 
     response, _ = json.Marshal(map[string]string{"error":err.Error()})  
     return response, http.StatusBadRequest
@@ -45,5 +45,20 @@ func GetBookById(id_str string) (json.RawMessage, int) {
     return response, http.StatusNotFound
   } 
   response, _ = json.Marshal(bookRes)
+  return response, http.StatusOK
+}
+func DeleteBookById(id_str string) (json.RawMessage, int) {
+  var response json.RawMessage
+  id, err := strconv.ParseUint(id_str, 10, 64)
+  if err != nil {
+    response, _ := json.Marshal(map[string]string{"error":err.Error()})
+    return response, http.StatusBadRequest
+  }
+  bookDel, err := models.DeleteBook(id)
+  if err != nil {
+    response, _ = json.Marshal(map[string]string{"error":err.Error()})
+    return response, http.StatusNotFound
+  } 
+  response, _ = json.Marshal(bookDel)
   return response, http.StatusOK
 }
