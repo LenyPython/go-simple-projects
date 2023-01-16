@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"errors"
 	"strconv"
 
@@ -63,12 +64,11 @@ func DeleteBook(id uint64) (*Book, error) {
   return &book, nil
 }
 
-func UpdateBook(ubook *Book) *Book {
-  var prev Book
-  db.First(&prev, ubook.ID)
-  if ubook.Name != "" { prev.Name = ubook.Name }
-  if ubook.Author != "" { prev.Author = ubook.Author }
-  if ubook.Publication != "" { prev.Publication = ubook.Author }
-  db.Save(&prev)
-  return &prev
+func UpdateBook(book *Book) (json.RawMessage, error) {
+  result := db.Save(book)
+  response, _ := json.Marshal(book)
+  if result.Error != nil {
+    return response, errors.New("SOmething went wrong...")
+  }
+  return response, nil
 }

@@ -34,7 +34,7 @@ func GetAllBooks() (json.RawMessage, int){
 }
 func GetBookById(id_str string) (json.RawMessage, int) {
   var response json.RawMessage
-  id, err := strconv.ParseUint(id_str, 10, 64)
+  id, err := strconv.ParseUint(id_str, 10, 32)
   if err != nil { 
     response, _ = json.Marshal(map[string]string{"error":err.Error()})  
     return response, http.StatusBadRequest
@@ -61,4 +61,30 @@ func DeleteBookById(id_str string) (json.RawMessage, int) {
   } 
   response, _ = json.Marshal(bookDel)
   return response, http.StatusOK
+}
+func UpdateBook(id_str string, r *http.Request) (json.RawMessage, int) {
+  var book models.Book
+  var response json.RawMessage
+  utils.ParseBody(r, &book)
+  id, err := strconv.ParseUint(id_str, 10, 64)
+  if err != nil {
+    response, _ = json.Marshal(map[string]string{"error":"Bad id param"}) 
+    return response, http.StatusBadRequest
+  }
+  currentBook, err := models.GetBookById(id)
+  if  err != nil {
+    response, _ = json.Marshal(map[string]string{"error":"Could not update book: "+err.Error()})
+    return response, http.StatusNotFound
+  }
+  if book.Name != "" { currentBook.Name = book.Name }
+  if book.Author != "" { currentBook.Author = book.Author }
+  if book.Publication != "" { currentBook.Publication = book.Author }
+  updatedBook, err := models.UpdateBook(currentBook)
+  if err != nil {
+    response, _ = json.Marshal(map[string]string{"error":"Could not update book: "+err.Error()})
+    return response, http.StatusNotModified
+  }
+  response, _ = json.Marshal(updatedBook)
+  return response, http.StatusOK
+
 }

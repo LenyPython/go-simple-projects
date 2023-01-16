@@ -1,12 +1,10 @@
 package controllers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"api/pkg/models"
 	"api/pkg/service"
-	"api/pkg/utils"
 
 	"github.com/gorilla/mux"
 )
@@ -35,7 +33,7 @@ func GetBookById(res http.ResponseWriter, req *http.Request){
   res.Write(book)
 }
 
-func DeleteBook(res http.ResponseWriter, req *http.Request){
+func DeleteBookById(res http.ResponseWriter, req *http.Request){
   params := mux.Vars(req)
   deletedBook, status := service.DeleteBookById(params["id"])
   res.Header().Set("Content-Type","application/json")
@@ -43,13 +41,10 @@ func DeleteBook(res http.ResponseWriter, req *http.Request){
   res.Write(deletedBook)
 }
 
-func UpdateBook(res http.ResponseWriter, req *http.Request){
-  var book models.Book
-  utils.ParseBody(req, &book)
-  updated := models.UpdateBook(&book)
-  updatedJson, err := json.Marshal(*updated)
-  if err != nil { panic(err) }
+func UpdateBookWithId(res http.ResponseWriter, req *http.Request){
+  params := mux.Vars(req)
+  msg, status := service.UpdateBook(params["id"], req)
   res.Header().Set("Content-Type","application/json")
-  res.WriteHeader(http.StatusOK)
-  res.Write(updatedJson)
+  res.WriteHeader(status)
+  res.Write(msg)
 }
